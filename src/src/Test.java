@@ -1,5 +1,8 @@
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.util.Arrays;
 import java.util.InputMismatchException;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 /**
@@ -9,35 +12,33 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Test
 {
-    public static void main(String[] args)
+    public Test() throws NoSuchAlgorithmException
     {
+    }
+
+    public static void main(String[] args) throws NoSuchAlgorithmException
+    {
+
         final var data = new Test();
         var in = new Scanner(System.in);
         var mode = 0;
         while (true)
         {
-            System.out.println("请选择模式: 1.直接查看数据   2.通过公共api查看数据   3.正常修改value");
+            System.out.println("请选择模式: 1.直接查看数据   2.通过公共api查看数据   3.正常修改value   4.恢复被修改的value   5.输出一个随机数");
             mode = in.nextInt();
-            switch(mode)
+            switch (mode)
             {
                 case 1:
                     System.out.println("-".repeat(65));
-                    System.out.println("现在的valueLock: " + data.valueLock);
-                    System.out.println("现在的value: " + data.value);
+                    System.out.println("key:" + data.key);
+                    System.out.println("真实的value: " + (data.value ^ data.key));
+                    System.out.println("存储的value: " + data.getStoredValue());
                     System.out.println("-".repeat(65));
 //                    System.out.println("现在的value: " + (data.key ^ data.valueLock));
                     break;
                 case 2:
                     System.out.println("-".repeat(65));
-                    System.out.println("现在的valueLock: " + data.getValueLock());
-                    try
-                    {
-                        System.out.println("现在的value: " + data.getValue());
-                    }
-                    catch (VariableModificationException e)
-                    {
-                        System.out.println("检测到异常修改数据");
-                    }
+                    System.out.println("真实的value: " + data.getActualValue());
                     System.out.println("-".repeat(65));
                     break;
 //                    System.out.println("现在的value: " + (data.getKey() ^ data.getValueLock()));
@@ -53,61 +54,44 @@ public class Test
                         System.out.println("您的输入超过上限, 请重新输入");
                     }
 
-                    try
-                    {
-                        System.out.println("正常修改后的value:" + data.getValue());
-                    }
-                    catch (VariableModificationException e)
-                    {
-                        e.printStackTrace();
-                    }
+                    System.out.println("正常修改后的value:" + data.getActualValue());
+                    System.out.println("-".repeat(65));
+                    break;
+                case 4:
+                    System.out.println("暂停");
+                    break;
+                case 5:
+                    System.out.println("-".repeat(65));
+                    System.out.println(ThreadLocalRandom.current().nextInt());
                     System.out.println("-".repeat(65));
                     break;
                 default:
                     System.out.println("错误, 请重新输入");
                     break;
             }
-
-//            System.out.print("模拟非法修改: ");
-//
-//            try
-//            {
-//                data.value = in.nextInt();
-//            }
-//            catch (InputMismatchException e)
-//            {
-//                System.out.println("您的输入超过上限, 请重新输入");
-//            }
-
-//            try
-//            {
-//                System.out.println("非法" + data.getValue());
-//            }
-//            catch (VariableModificationException e)
-//            {
-//                System.out.println("不允许的修改");
-//            }
         }
     }
 
 //    private int value = ThreadLocalRandom.current().nextInt();
-    private int value = 100;
-    private final int key = 3275851;
-    private int valueLock = value ^ key;
+    private final SecureRandom v = SecureRandom.getInstance("Windows-PRNG");
+    private final int key = v.nextInt();
 
-    public int getValue() throws VariableModificationException
+
+    private int value = 100 ^ key;
+
+    public int getActualValue()
     {
-        if ((valueLock ^ key) != value)
-        {
-            throw new VariableModificationException("疑似作弊!!!");
-        }
+        return value ^ key;
+    }
+
+    public int getStoredValue()
+    {
         return value;
     }
 
     public void setValue(int value)
     {
-        valueLock = value ^ key;
-        this.value = value;
+        this.value = value ^ key;
     }
 
     public int getKey()
@@ -115,13 +99,8 @@ public class Test
         return key;
     }
 
-    public int getValueLock()
-    {
-        return valueLock;
-    }
-
-    public void setValueLock(int valueLock)
-    {
-        this.valueLock = valueLock;
-    }
+//     public int getActualValue()
+//     {
+//        return valueLock ^ key;
+//     }
 }
