@@ -24,6 +24,7 @@ public class Test
                     System.out.println("-".repeat(65));
                     System.out.println("现在的valueLock: " + data.valueLock);
                     System.out.println("现在的value: " + data.value);
+                    System.out.println("-".repeat(65));
 //                    System.out.println("现在的value: " + (data.key ^ data.valueLock));
                     break;
                 case 2:
@@ -37,6 +38,7 @@ public class Test
                     {
                         System.out.println("检测到异常修改数据");
                     }
+                    System.out.println("-".repeat(65));
                     break;
 //                    System.out.println("现在的value: " + (data.getKey() ^ data.getValueLock()));
                 case 3:
@@ -59,6 +61,7 @@ public class Test
                     {
                         e.printStackTrace();
                     }
+                    System.out.println("-".repeat(65));
                     break;
                 default:
                     System.out.println("错误, 请重新输入");
