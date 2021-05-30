@@ -27,6 +27,5 @@ public class TestValue
         System.out.println(r4.nextInt());
         System.out.println(r5.nextInt());
         System.out.println(SecureRandom.getInstanceStrong().nextInt());
-        System.out.println(SecureRandom.getInstanceStrong().nextDouble() ^ 0.123);
     }
 }
